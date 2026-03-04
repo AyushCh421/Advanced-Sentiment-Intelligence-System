@@ -5,21 +5,32 @@ from sklearn.feature_extraction.text import CountVectorizer
 import re
 from nltk.corpus import stopwords
 import nltk
+import os
 
-# download stopwords (only runs first time)
+# Download stopwords (only runs first time)
 nltk.download("stopwords")
 
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
-# Load model
+# Load model architecture
 model = AutoModelForSequenceClassification.from_pretrained(
     "bert-base-uncased",
     num_labels=3
 )
 
-model.load_state_dict(torch.load("bert_sentiment_model.pth", map_location="cpu"))
-model.eval()
+# Model path
+MODEL_PATH = "bert_sentiment_model.pth"
+
+# Load trained weights if available
+if os.path.exists(MODEL_PATH):
+    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+    model.eval()
+else:
+    st.error(
+        "Model file 'bert_sentiment_model.pth' not found.\n\n"
+        "Please train the model using the training notebook before running the app."
+    )
 
 # Stopwords
 stop_words = set(stopwords.words("english"))
@@ -91,6 +102,7 @@ if st.button("Analyze"):
 
     if review.strip() == "":
         st.warning("Please enter a review.")
+
     else:
 
         sentiment_map = {
