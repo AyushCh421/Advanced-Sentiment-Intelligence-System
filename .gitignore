@@ -1,0 +1,26 @@
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.venv
+venv
+
+# Streamlit cache
+.streamlit/
+
+#Dataset
+Maindata.xlsx
+
+# Dataset backups
+*.csv
+*.xlsx~
+
+# Model files
+*.pth
+*.pt
+
+# IDE files
+.vscode/
+.idea/

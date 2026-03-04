@@ -1,0 +1,165 @@
+# Advanced Sentiment Intelligence System (ASIS)
+
+## Overview
+
+The Advanced Sentiment Intelligence System (ASIS) is a Natural Language Processing project that performs sentiment analysis on customer reviews and automatically identifies the reasons behind customer satisfaction or dissatisfaction.
+
+The system uses a fine-tuned BERT transformer model to classify reviews into Positive, Neutral, or Negative sentiments. After predicting sentiment, the system extracts meaningful keywords and phrase-level insights to explain why a review was classified in a particular way.
+
+This project demonstrates a complete NLP pipeline including model training, evaluation, inference, and an interactive web interface.
+
+---
+
+## Features
+
+- Transformer-based Sentiment Analysis using BERT
+- Real-time sentiment prediction
+- Automatic keyword extraction
+- Phrase-level reason detection using bigrams
+- Dataset-level insight extraction
+- Interactive web application using Streamlit
+
+---
+
+## Model Details
+
+Model Used:
+- BERT (bert-base-uncased)
+
+Task:
+- Multi-class sentiment classification
+
+Sentiment Classes:
+- Negative
+- Neutral
+- Positive
+
+Training Framework:
+- PyTorch
+- HuggingFace Transformers
+
+---
+
+## System Pipeline
+
+Customer Review  
+↓  
+BERT Sentiment Classification  
+↓  
+Keyword Extraction  
+↓  
+Phrase Detection (Bigrams)  
+↓  
+Reason Explanation  
+
+Example:
+
+Input Review:The delivery was very late and the food was cold
+
+
+Output:
+
+
+Sentiment: Negative
+Reason Keywords: delivery, late, food, cold
+Reason Phrases: delivery late, food cold
+
+
+---
+
+## Project Structure
+
+
+Advanced-Sentiment-Intelligence-System/
+
+│
+├── notebooks/
+│ ├── 01_BERT_Sentiment_Training.ipynb│
+├── bert_sentiment_model.pth
+├── Maindata.xlsx
+│
+├── app.py
+├── requirements.txt
+│
+├── README.md
+└── .gitignore
+
+
+---
+
+## Installation
+
+Clone the repository:git clone https://github.com/YOUR_USERNAME/Advanced-Sentiment-Intelligence-System.git
+
+
+Move into the project folder:
+
+
+cd Advanced-Sentiment-Intelligence-System
+
+
+Install dependencies:
+
+
+pip install -r requirements.txt
+
+
+---
+
+## Running the Streamlit Application
+
+Start the Streamlit app:
+
+
+streamlit run app.pyAfter running, open the following in your browser:
+
+
+http://localhost:8501
+
+
+---
+
+## Example Usage
+
+Input:
+
+
+The food was delicious but the delivery was late
+
+
+Output:
+
+
+Sentiment: Negative
+Keywords: food, delicious, delivery, late
+Reason Phrases: food delicious, delivery late
+
+
+---
+
+## Technologies Used
+
+- Python
+- PyTorch
+- HuggingFace Transformers
+- Streamlit
+- Scikit-learn
+- NLTK
+- Pandas
+
+---
+
+## Future Improvements
+
+- Improved sentiment calibration for mixed reviews
+- Phrase-level explanation using dependency parsing
+- Advanced topic modeling for deeper insights
+- Deployment using cloud platforms
+
+---
+
+## Author
+
+Ayush Chauhan  
+B.Tech Student  
+Aspiring Machine Learning Engineer
