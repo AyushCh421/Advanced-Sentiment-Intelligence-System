@@ -74,9 +74,8 @@ Advanced-Sentiment-Intelligence-System/
 
 │
 ├── notebooks/
-│ ├── 01_BERT_Sentiment_Training.ipynb│
-├── bert_sentiment_model.pth
-├── Maindata.xlsx
+│ ├── Sentiment_Analysis(01).ipynb│
+|  |--Reason_Insight_Analysis(02).ipynb
 │
 ├── app.py
 ├── requirements.txt
@@ -87,9 +86,24 @@ Advanced-Sentiment-Intelligence-System/
 
 ---
 
+## Model File
+
+The trained BERT model file (`bert_sentiment_model.pth`) is not included in this repository because it exceeds GitHub's file size limit.
+
+To run the project locally:
+
+1. Train the model using the training notebook:
+notebooks/Sentiment_Analysis(01).ipynb
+2. Save the trained model as:
+
+bert_sentiment_model.pth
+3. Place the file in the root project directory.
+
+Once the model file is generated, the Streamlit application can load it and perform sentiment prediction.
+
 ## Installation
 
-Clone the repository:git clone https://github.com/YOUR_USERNAME/Advanced-Sentiment-Intelligence-System.git
+Clone the repository:git clone https://github.com/AyushCh421/Advanced-Sentiment-Intelligence-System
 
 
 Move into the project folder:
