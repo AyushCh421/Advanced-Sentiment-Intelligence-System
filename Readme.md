@@ -21,6 +21,8 @@ This project demonstrates a complete NLP pipeline including model training, eval
 
 ---
 
+Note: The trained model file is excluded from the repository due to GitHub file size limitations.
+
 ## Model Details
 
 Model Used:
