@@ -6,38 +6,49 @@ import re
 from nltk.corpus import stopwords
 import nltk
 import os
+import gdown
 
-# Download stopwords (only runs first time)
+# -----------------------------
+# Download stopwords
+# -----------------------------
 nltk.download("stopwords")
 
+# -----------------------------
+# Model download from Google Drive
+# -----------------------------
+MODEL_PATH = "bert_sentiment_model.pth"
+
+if not os.path.exists(MODEL_PATH):
+
+    file_id = "1SiTUjX-eePKFlJIqplgKeCYFAQoF0BLO"
+    url = f"https://drive.google.com/uc?id={file_id}"
+
+    with st.spinner("Downloading model... This may take a moment ⏳"):
+        gdown.download(url, MODEL_PATH, quiet=False)
+
+# -----------------------------
 # Load tokenizer
+# -----------------------------
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
-# Load model architecture
+# -----------------------------
+# Load model
+# -----------------------------
 model = AutoModelForSequenceClassification.from_pretrained(
     "bert-base-uncased",
     num_labels=3
 )
 
-# Model path
-MODEL_PATH = "bert_sentiment_model.pth"
-
-# Load trained weights if available
-if os.path.exists(MODEL_PATH):
-    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-    model.eval()
-else:
-    st.error(
-        "Model file 'bert_sentiment_model.pth' not found.\n\n"
-        "Please train the model using the training notebook before running the app."
-    )
-
-# Stopwords
-stop_words = set(stopwords.words("english"))
-
+model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+model.eval()
 
 # -----------------------------
-# Text Cleaning Function
+# Stopwords
+# -----------------------------
+stop_words = set(stopwords.words("english"))
+
+# -----------------------------
+# Clean text
 # -----------------------------
 def clean_text(text):
 
@@ -49,9 +60,8 @@ def clean_text(text):
 
     return words
 
-
 # -----------------------------
-# Sentiment Prediction
+# Sentiment prediction
 # -----------------------------
 def predict_sentiment(text):
 
@@ -71,9 +81,8 @@ def predict_sentiment(text):
 
     return prediction
 
-
 # -----------------------------
-# Phrase Extraction
+# Extract phrases
 # -----------------------------
 def extract_phrases(text):
 
@@ -87,7 +96,6 @@ def extract_phrases(text):
     phrases = vectorizer.get_feature_names_out()
 
     return phrases
-
 
 # -----------------------------
 # Streamlit UI
