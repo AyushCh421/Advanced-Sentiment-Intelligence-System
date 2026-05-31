@@ -1,8 +1,9 @@
-torch
-transformers
-streamlit
-pandas
-scikit-learn
-nltk
-openpyxl
-gdown
+streamlit==1.32.0
+transformers==4.40.0
+torch==2.1.0
+tokenizers==0.19.1
+scikit-learn==1.4.0
+pandas==2.2.0
+numpy==1.26.4
+nltk==3.8.1
+gdown==5.1.0
