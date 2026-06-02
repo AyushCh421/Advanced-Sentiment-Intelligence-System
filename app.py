@@ -9,38 +9,50 @@ import os
 import gdown
 
 # -----------------------------
-# Download stopwords
+# Download stopwords only once
 # -----------------------------
-nltk.download("stopwords")
+try:
+    stopwords.words("english")
+except LookupError:
+    nltk.download("stopwords", quiet=True)
 
 # -----------------------------
-# Model download from Google Drive
+# Model path
 # -----------------------------
 MODEL_PATH = "bert_sentiment_model.pth"
 
+# -----------------------------
+# Download model if not present
+# -----------------------------
 if not os.path.exists(MODEL_PATH):
-
     file_id = "1SiTUjX-eePKFlJIqplgKeCYFAQoF0BLO"
     url = f"https://drive.google.com/uc?id={file_id}"
 
-    with st.spinner("Downloading model... This may take a moment ⏳"):
+    with st.spinner("Downloading model... Please wait ⏳"):
         gdown.download(url, MODEL_PATH, quiet=False)
 
 # -----------------------------
-# Load tokenizer
+# Load tokenizer and model
 # -----------------------------
-tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+@st.cache_resource
+def load_model():
+    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
-# -----------------------------
-# Load model
-# -----------------------------
-model = AutoModelForSequenceClassification.from_pretrained(
-    "bert-base-uncased",
-    num_labels=3
-)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        "bert-base-uncased",
+        num_labels=3
+    )
 
-model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-model.eval()
+    model.load_state_dict(
+        torch.load(MODEL_PATH, map_location=torch.device("cpu"))
+    )
+
+    model.eval()
+
+    return tokenizer, model
+
+
+tokenizer, model = load_model()
 
 # -----------------------------
 # Stopwords
@@ -53,15 +65,17 @@ stop_words = set(stopwords.words("english"))
 def clean_text(text):
 
     text = text.lower()
+
     text = re.sub(r"[^a-zA-Z\s]", "", text)
 
     words = text.split()
+
     words = [word for word in words if word not in stop_words]
 
     return words
 
 # -----------------------------
-# Sentiment prediction
+# Predict sentiment
 # -----------------------------
 def predict_sentiment(text):
 
@@ -77,41 +91,64 @@ def predict_sentiment(text):
         outputs = model(**inputs)
 
     logits = outputs.logits
+
     prediction = torch.argmax(logits, dim=1).item()
 
     return prediction
 
 # -----------------------------
-# Extract phrases
+# Extract phrases safely
 # -----------------------------
 def extract_phrases(text):
 
-    vectorizer = CountVectorizer(
-        stop_words="english",
-        ngram_range=(2, 2)
-    )
+    words = clean_text(text)
 
-    X = vectorizer.fit_transform([text])
+    # Need at least 2 words for bigrams
+    if len(words) < 2:
+        return []
 
-    phrases = vectorizer.get_feature_names_out()
+    cleaned_text = " ".join(words)
 
-    return phrases
+    try:
+        vectorizer = CountVectorizer(
+            ngram_range=(2, 2)
+        )
+
+        X = vectorizer.fit_transform([cleaned_text])
+
+        phrases = vectorizer.get_feature_names_out()
+
+        return list(phrases)
+
+    except ValueError:
+        return []
 
 # -----------------------------
 # Streamlit UI
 # -----------------------------
-st.title("Advanced Sentiment Intelligence System")
+st.set_page_config(
+    page_title="Advanced Sentiment Intelligence System",
+    page_icon="📊"
+)
 
-st.write("Analyze customer reviews and detect sentiment with possible reasons.")
+st.title("📊 Advanced Sentiment Intelligence System")
 
-review = st.text_area("Enter Customer Review")
+st.write(
+    "Analyze customer reviews and detect sentiment with possible reasons."
+)
+
+review = st.text_area(
+    "Enter Customer Review",
+    height=150
+)
 
 if st.button("Analyze"):
 
     if review.strip() == "":
         st.warning("Please enter a review.")
+        st.stop()
 
-    else:
+    try:
 
         sentiment_map = {
             0: "Negative",
@@ -120,16 +157,32 @@ if st.button("Analyze"):
         }
 
         sentiment_id = predict_sentiment(review)
-        sentiment = sentiment_map[sentiment_id]
+
+        sentiment = sentiment_map.get(
+            sentiment_id,
+            "Unknown"
+        )
 
         keywords = clean_text(review)
+
         phrases = extract_phrases(review)
 
         st.subheader("Sentiment")
-        st.write(sentiment)
+        st.success(sentiment)
 
         st.subheader("Keyword Reasons")
-        st.write(keywords)
+
+        if keywords:
+            st.write(keywords)
+        else:
+            st.write("No keywords found.")
 
         st.subheader("Reason Phrases")
-        st.write(phrases)
+
+        if phrases:
+            st.write(phrases)
+        else:
+            st.write("No meaningful phrases found.")
+
+    except Exception as e:
+        st.error(f"Error: {str(e)}")
