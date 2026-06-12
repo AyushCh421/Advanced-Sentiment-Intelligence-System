@@ -12,6 +12,7 @@
 | Classes | Positive / Neutral / Negative |
 | Dataset | 10,000+ customer reviews |
 | Baseline (TF-IDF) | ~73% |
+| Live App | [Launch Demo](https://advanced-sentiment-intelligence-system-kr4aa79uam9zs3p577zlqd.streamlit.app/) |
 
 ## Overview
 The Advanced Sentiment Intelligence System (ASIS) is an NLP project 
